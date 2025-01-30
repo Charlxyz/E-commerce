@@ -1,97 +1,217 @@
-import os
-from flask_login import UserMixin
-from flask_restful import Api
-from flask_sqlalchemy import SQLAlchemy
-from flask import Flask
+from flask import Flask, render_template, redirect, url_for, flash, request
+from utils import Order, Payment, Product, User, reviews, app, db
 
-app = Flask(__name__, template_folder='./flaskr/templates', static_folder='./flaskr/static')
-
-# Config API
-api = Api(app)
-
-# Config base de données
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(basedir, 'DataBase', 'bdd.db')}"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-
-# Utilisateur
-class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    nom = db.Column(db.String, nullable=False)
-    email = db.Column(db.String, unique=True, nullable=False)
-    password = db.Column(db.String, nullable=False)
-    role = db.Column(db.String, nullable=False, default='user')
-
-    orders = db.relationship('Order', back_populates='user')
-
-# Produits
-class Product(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    nom = db.Column(db.String, nullable=False)
-    description = db.Column(db.String, nullable=False)
-    prix = db.Column(db.Float, nullable=False)
-    quantite = db.Column(db.Integer, nullable=False)
-    image = db.Column(db.String, nullable=False)
-    remise = db.Column(db.Float, nullable=False, default=0)
-
-# Commandes
-class Order(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    date = db.Column(db.DateTime, nullable=False)
-
-    user = db.relationship('User', back_populates='orders')
-    order_items = db.relationship('OrderItem', back_populates='order', cascade="all, delete-orphan")
-
-# Table pivot entre commandes et produits
-class OrderItem(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
-    quantite = db.Column(db.Integer, nullable=False)
-
-    order = db.relationship('Order', back_populates='order_items')
-    product = db.relationship('Product', back_populates='orders')
-
-# Paiements
-class Payment(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
-    montant = db.Column(db.Float, nullable=False)
-    date_paiement = db.Column(db.DateTime, nullable=False)
-    statut = db.Column(db.String, nullable=False, default="en attente")  # Ex: "payé", "échec", "en attente"
-
-    order = db.relationship('Order', back_populates='payments')
-
-class reviews(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    rating = db.Column(db.Integer, nullable=False)
-    comment = db.Column(db.String, nullable=False)
-
-    product = db.relationship('Product', back_populates='reviews')
-    user = db.relationship('User', back_populates='reviews')
-
-class Categories(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    nom = db.Column(db.String, nullable=False)
-    description = db.Column(db.String, nullable=False)
-
-class Cart(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
-    quantite = db.Column(db.Integer, nullable=False)
-
-    user = db.relationship('User', back_populates='cart')
-    product = db.relationship('Product', back_populates='cart')
 
 @app.route('/')
 def index():
     return 'Hello, World!'
 
+
+# Gestion Produits
+@app.route('/products', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def get_product():
+    if request.method == 'POST':
+        product = Product(
+            nom = request['name'],
+            descriprion = request['description'],
+            prix = request['price'],
+            quantite = request['quantity'],
+            image = request['image'],
+            remise = request['discount']
+        )
+        db.session.add(product)
+        db.session.commit()
+        flash('Produit ajouté avec succès', 'sucess')
+
+    elif request.method == 'PUT':
+        product = Product.query.get(request['id'])
+        product.nom = request['name']
+        product.description = request['description']
+        product.prix = request['price']
+        product.quantite = request['quantity']
+        product.image = request['image']
+        product.remise = request['discount']
+        db.session.commit()
+        flash('Produit modifié avec succès', 'sucess')
+    return render_template(), Product.query.all()
+
+@app.route('/poducts/<int:product_id>', methods=['GET'])
+def get_product_by_id(product_id):
+    return Product.query.get(product_id)
+
+@app.route('/products/<int:product_id>', methods=['PUT'])
+def update_product_by_id(product_id):
+    product = Product.query.get(product_id)
+    product.nom = request['name']
+    product.description = request['description']
+    product.prix = request['price']
+    product.quantite = request['quantity']
+    product.image = request['image']
+    product.remise = request['discount']
+    db.session.commit()
+    flash(f'Produit {product.nom} modifié avec succès', 'sucess')
+    return
+
+@app.route('/products/<int:product_id>', methods=['DELETE'])
+def delete_product_by_id(product_id):
+    product = Product.query.get(product_id)
+    db.session.delete(product)
+    db.session.commit()
+    flash(f'Produit {product.nom} supprimé avec succès', 'sucess')
+    return
+
+
+# Gestion Utilisateurs
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        user = User(
+            nom = request['name'],
+            email = request['email'],
+            password = request['password']
+        )
+        db.session.add(user)
+        db.session.commit()
+        flash('Utilisateur ajouté avec succès', 'sucess')
+        return
+    return render_template('./auth/register.html')
+
+@app.route('/user/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        user = User.query.filter_by(email=request['email']).first()
+        if user and user.password == request['password']:
+            flash('Connexion réussie', 'sucess')
+            return
+        flash('Email ou mot de passe incorrect', 'error')
+        return
+    return render_template('./auth/login.html')
+
+@app.route('/users/<int:user_id>', methods=['GET'])
+def get_user_by_id(user_id):
+    return User.query.get(user_id)
+
+@app.route('/users/<int:user_id>', methods=['PUT'])
+def update_user_by_id(user_id):
+    user = User.query.get(user_id)
+    user.nom = request['name']
+    user.email = request['email']
+    user.password = request['password']
+    db.session.commit()
+    flash(f'Utilisateur {user.nom} modifié avec succès', 'sucess')
+    return
+
+@app.route('/users/<int:user_id>', methods=['DELETE'])
+def delete_user_by_id(user_id):
+    user = User.query.get(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    flash(f'Utilisateur {user.nom} supprimé avec succès', 'sucess')
+    return
+
+
+# Gestion Commandes
+@app.route('/orders', methods=['GET', 'POST'])
+def get_order():
+    if request.method == 'POST':
+        order = Order(
+            user_id = request['user_id'],
+            date = request['date']
+        )
+        db.session.add(order)
+        db.session.commit()
+        flash('Commande ajouté avec succès', 'sucess')
+    return render_template(), Order.query.all()
+
+@app.route('/orders/<int:order_id>', methods=['GET'])
+def get_order_by_id(order_id):
+    return Order.query.get(order_id)
+
+@app.route('/users/<int:user_id>/orders', methods=['GET'])
+def get_orders_by_user_id(user_id):
+    return Order.query.filter_by(user_id=user_id)
+
+@app.route('/orders/<int:order_id>', methods=['PUT'])
+def update_order_by_id(order_id):
+    order = Order.query.get(order_id)
+    order.user_id = request['user_id']
+    order.date = request['date']
+    db.session.commit()
+    flash('Commande modifié avec succès', 'sucess')
+    return
+
+@app.route('/orders/<int:order_id>', methods=['DELETE'])
+def delete_order_by_id(order_id):
+    order = Order.query.get(order_id)
+    db.session.delete(order)
+    db.session.commit()
+    flash('Commande supprimé avec succès', 'sucess')
+    return
+
+
+# Gestion Paiements
+@app.route('/payments', methods=['GET', 'POST'])
+def get_payment():
+    if request.method == 'POST':
+        payment = Payment(
+            order_id = request['order_id'],
+            montant = request['amount'],
+            date_paiement = request['payment_date']
+        )
+        db.session.add(payment)
+        db.session.commit()
+        flash('Paiement ajouté avec succès', 'sucess')
+    return render_template(), Payment.query.all()
+
+@app.route('/payments/<int:payment_id>', methods=['GET'])
+def get_payment_by_id(payment_id):
+    return Payment.query.get(payment_id)
+
+@app.route('/orders/<int:order_id>/payments', methods=['GET'])
+def get_payments_by_order_id(order_id):
+    return Payment.query.filter_by(order_id=order_id)
+
+
+# Gestion Avis
+@app.route('/reviews', methods=['GET', 'POST'])
+def get_review():
+    if request.method == 'POST':
+        review = reviews(
+            product_id = request['product_id'],
+            user_id = request['user_id'],
+            rating = request['rating'],
+            comment = request['comment']
+        )
+        db.session.add(review)
+        db.session.commit()
+        flash('Avis ajouté avec succès', 'sucess')
+    return render_template(), reviews.query.all()
+
+@app.route('/products/<int:product_id>/reviews', methods=['POST', 'GET'])
+def add_review(product_id):
+    if request.method == 'POST':
+        review = reviews(
+            product_id=product_id,
+            user_id=request['user_id'],
+            rating=request['rating'],
+            comment=request['comment']
+        )
+        db.session.add(review)
+        db.session.commit()
+        flash(f'Avis ajouté avec succès pour {product_id}', 'success')
+    return render_template(), reviews.query.filter_by(product_id=product_id)
+
+@app.route('/reviews/<int:review_id>', methods=['DELETE'])
+def delete_review_by_id(review_id):
+    review = reviews.query.get(review_id)
+    db.session.delete(review)
+    db.session.commit()
+    flash('Avis supprimé avec succès', 'sucess')
+    return
+
+
+# Lancement
 if __name__ == '__main__':
-    db.create_all()  # Crée les tables si elles n'existent pas
+    with app.app_context():
+        db.create_all()  # Crée les tables correctement
     app.run(debug=True)
