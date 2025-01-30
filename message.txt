@@ -1,0 +1,150 @@
+Consignes pour créer le backend d'un site e-commerce avec Flask et MySQL
+
+Objectif général
+
+Vous allez développer le backend d'un site e-commerce en utilisant Flask pour créer une API REST et MySQL pour gérer les données. Cette API permettra de gérer les produits, les utilisateurs, les commandes, et les paiements. Vous devrez écrire des routes et leurs fonctionnalités correspondantes selon les consignes ci-dessous.
+
+Organisation générale
+
+Base de données :
+
+Créez une base de données pour stocker les informations sur les produits, les utilisateurs, les commandes, et les paiements.
+Utilisez des relations entre les tables (par exemple, un utilisateur peut avoir plusieurs commandes).
+API REST :
+
+Implémentez les routes en suivant les consignes ci-dessous.
+Chaque route doit respecter le style REST (GET, POST, PUT, DELETE).
+Règles générales :
+
+Respectez les codes HTTP standards (200, 201, 400, 404, etc.).
+Gérez les erreurs (exemple : que se passe-t-il si une ressource demandée n'existe pas ?).
+Sécurité : (optionnel pour aller plus loin)
+
+Implémentez des protections pour certaines routes avec des clés API ou des jetons (tokens).
+Ne stockez jamais les mots de passe en clair (utilisez un mécanisme de hachage, par exemple bcrypt ou sha512).
+Routes nécessaires pour l'API e-commerce
+
+1. Gestion des produits
+
+GET /products :
+
+Récupère la liste de tous les produits disponibles.
+Résultat attendu : Une liste avec les détails des produits (ID, nom, description, prix, stock).
+GET /products/<int:product_id> :
+
+Récupère les détails d'un produit spécifique par son ID.
+Résultat attendu : Les informations du produit (nom, description, prix, stock, etc.).
+POST /products :
+
+Permet d'ajouter un nouveau produit à la base de données.
+Données attendues dans le corps de la requête : nom, description, prix, quantité en stock.
+Résultat attendu : Confirmation que le produit a été ajouté avec succès.
+PUT /products/<int:product_id> :
+
+Met à jour les informations d'un produit existant.
+Données attendues : les champs à modifier (nom, prix, etc.).
+Résultat attendu : Confirmation que le produit a été mis à jour.
+DELETE /products/<int:product_id> :
+
+Supprime un produit par son ID.
+Résultat attendu : Confirmation que le produit a été supprimé.
+2. Gestion des utilisateurs
+
+POST /users/register :
+
+Permet de créer un nouvel utilisateur.
+Données attendues : nom, email, mot de passe.
+Résultat attendu : Confirmation de l'inscription de l'utilisateur.
+POST /users/login :
+
+Permet à un utilisateur de se connecter.
+Données attendues : email, mot de passe.
+Résultat attendu : Un jeton d'authentification ou une confirmation de connexion.
+GET /users/<int:user_id> :
+
+Récupère les informations d'un utilisateur (par exemple, son nom et son historique de commandes).
+Résultat attendu : Les détails de l'utilisateur.
+PUT /users/<int:user_id> :
+
+Met à jour les informations d'un utilisateur.
+Données attendues : les champs à modifier (nom, email, etc.).
+Résultat attendu : Confirmation de la mise à jour.
+DELETE /users/<int:user_id> :
+
+Supprime un utilisateur et toutes ses données associées.
+Résultat attendu : Confirmation de la suppression.
+3. Gestion des commandes
+
+POST /orders :
+
+Crée une nouvelle commande pour un utilisateur.
+Données attendues : ID de l'utilisateur, liste des produits (ID et quantités).
+Résultat attendu : Confirmation que la commande a été créée.
+GET /orders/<int:order_id> :
+
+Récupère les détails d'une commande spécifique.
+Résultat attendu : Les produits commandés, le total, la date de commande, et le statut.
+GET /users/<int:user_id>/orders :
+
+Récupère toutes les commandes passées par un utilisateur spécifique.
+Résultat attendu : Une liste de commandes avec leurs statuts et totaux.
+PUT /orders/<int:order_id> :
+
+Permet de mettre à jour le statut d'une commande (par exemple : "en traitement", "expédiée", "livrée").
+Résultat attendu : Confirmation que le statut a été mis à jour.
+DELETE /orders/<int:order_id> :
+
+Supprime une commande (par exemple, si elle a été annulée).
+Résultat attendu : Confirmation de la suppression.
+4. Gestion des paiements
+
+POST /payments :
+
+Enregistre un paiement pour une commande.
+Données attendues : ID de la commande, montant, méthode de paiement (carte, PayPal, etc.).
+Résultat attendu : Confirmation que le paiement a été enregistré.
+GET /payments/<int:payment_id> :
+
+Récupère les détails d'un paiement spécifique.
+Résultat attendu : Détails du paiement (commande associée, montant, date, méthode).
+GET /orders/<int:order_id>/payments :
+
+Récupère les paiements associés à une commande.
+Résultat attendu : Liste des paiements avec leurs détails.
+5. Gestion des avis clients (optionnel)
+
+POST /products/<int:product_id>/reviews :
+
+Permet à un utilisateur de laisser un avis sur un produit.
+Données attendues : ID de l'utilisateur, note (1-5), commentaire.
+Résultat attendu : Confirmation que l'avis a été enregistré.
+GET /products/<int:product_id>/reviews :
+
+Récupère tous les avis laissés pour un produit.
+Résultat attendu : Liste des avis avec leurs notes et commentaires.
+DELETE /reviews/<int:review_id> :
+
+Supprime un avis.
+Résultat attendu : Confirmation de la suppression.
+Astuces 
+
+Commencez simple : Implémentez d'abord les tables de la base de donnée, ensuite les routes pour gérer les produits, puis passez aux utilisateurs et commandes.
+Testez régulièrement : Utilisez Thunder de VScode ou requests en Python pour vérifier que vos routes fonctionnent.
+Divisez le travail : Si vous travaillez en groupe, attribuez des sections différentes (produits, utilisateurs, commandes) à chacun.
+Posez des questions : Si quelque chose n'est pas clair, envoyez moi un mail ou cherchez dans la documentation officielle Flask/MySQL.
+Le nom des tables peuvent étre les suivantes : 
+
+users : pour gérer les informations des utilisateurs.
+products : pour gérer les produits disponibles sur le site.
+orders : pour enregistrer les commandes passées par les utilisateurs.
+order_items : pour détailler les produits inclus dans chaque commande.
+payments : pour enregistrer les paiements associés aux commandes.
+reviews : pour gérer les avis laissés par les utilisateurs sur les produits.
+categories : pour organiser les produits en différentes catégories.
+cart (optionnel) : pour stocker les articles que les utilisateurs ajoutent à leur panier avant de passer commande.
+Ces tables peuvent être reliées entre elles à l’aide de clés primaires et étrangères pour établir des relations comme :
+
+Un utilisateur peut passer plusieurs commandes.
+Une commande peut inclure plusieurs produits via order_items.
+Un produit peut avoir plusieurs avis via reviews.
+Un produit peut appartenir à une catégorie via categories.
