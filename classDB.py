@@ -14,9 +14,11 @@ class User(db.Model, UserMixin):
     nom = db.Column(db.String, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
-    role = db.Column(db.String, nullable=False, default='user')
+    role = db.Column(db.String, nullable=False, default='user') # user, admin, seller
 
     orders = db.relationship('Order', back_populates='user')
+    reviews = db.relationship('Reviews', back_populates='user', cascade="all, delete-orphan")
+    cart = db.relationship('Cart', back_populates='user', cascade="all, delete-orphan")
 
 # Produits
 class Product(db.Model):
@@ -28,6 +30,20 @@ class Product(db.Model):
     image = db.Column(db.String, nullable=False)
     remise = db.Column(db.Float, nullable=False, default=0)
 
+    orders = db.relationship('OrderItem', back_populates='product', cascade="all, delete-orphan")
+    reviews = db.relationship('Reviews', back_populates='product', cascade="all, delete-orphan")
+    cart = db.relationship('Cart', back_populates='product', cascade="all, delete-orphan")
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nom': self.nom,
+            'description': self.description,
+            'prix': self.prix,
+            'quantite': self.quantite,
+            'image': self.image
+        }
+
 # Commandes
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -37,6 +53,7 @@ class Order(db.Model):
 
     user = db.relationship('User', back_populates='orders')
     order_items = db.relationship('OrderItem', back_populates='order', cascade="all, delete-orphan")
+    payments = db.relationship('Payment', back_populates='order', cascade="all, delete-orphan")
 
 # Table pivot entre commandes et produits
 class OrderItem(db.Model):
@@ -59,7 +76,7 @@ class Payment(db.Model):
     order = db.relationship('Order', back_populates='payments')
 
 # Avis
-class reviews(db.Model):
+class Reviews(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

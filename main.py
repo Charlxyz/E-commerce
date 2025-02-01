@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_login import LoginManager, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from classDB import Order, Payment, Product, User, reviews, db
+from classDB import Order, Payment, Product, User, Reviews, db
 from app import app
 
 
@@ -12,12 +12,13 @@ def load_user(id):
 
 
 @app.route('/')
+@app.route('/home')
 def index():
     return render_template('index.html')
 
 
 # Gestion Produits
-@app.route('/products', methods=['GET', 'POST', 'PUT', 'DELETE'])
+@app.route('/products', methods=['GET', 'POST', 'PUT'])
 def get_product():
     if request.method == 'POST':
         product = Product(
@@ -42,7 +43,12 @@ def get_product():
         product.remise = request['discount']
         db.session.commit()
         flash('Produit modifié avec succès', 'sucess')
-    return render_template(), Product.query.all()
+
+    elif request.method == 'GET': # Fais 💚
+        products = Product.query.all()
+        return render_template('product.html', products=products)
+
+    return render_template('product.html')
 
 @app.route('/poducts/<int:product_id>', methods=['GET'])
 def get_product_by_id(product_id):
@@ -51,12 +57,12 @@ def get_product_by_id(product_id):
 @app.route('/products/<int:product_id>', methods=['PUT'])
 def update_product_by_id(product_id):
     product = Product.query.get(product_id)
-    product.nom = request['name']
-    product.description = request['description']
-    product.prix = request['price']
-    product.quantite = request['quantity']
-    product.image = request['image']
-    product.remise = request['discount']
+    product.nom = request.form['name']
+    product.description = request.form['description']
+    product.prix = request.form['price']
+    product.quantite = request.form['quantity']
+    product.image = request.form['image']
+    product.remise = request.form['discount']
     db.session.commit()
     flash(f'Produit {product.nom} modifié avec succès', 'sucess')
     return
@@ -74,29 +80,30 @@ def delete_product_by_id(product_id):
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        user = User(
-            nom = request['name'],
-            email = request['email'],
-            password = generate_password_hash(request['password'])
-        )
+        try:
+            user = User(
+                nom = request.form['name'],
+                email = request.form['email'],
+                password = generate_password_hash(request.form['password'])
+            )
+        except:
+            flash("Erreur d'entré.", "warning")
         db.session.add(user)
         db.session.commit()
-        flash('Utilisateur ajouté avec succès', 'sucess')
-        return
+        flash('Utilisateur créer avec succès', 'sucess')
+        return redirect(url_for('login'))
     return render_template('./auth/register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        user = User.query.filter_by(email=request['email']).first()
-        if user and check_password_hash(user.password, request['password']):
+        user = User.query.filter_by(nom=request.form['name']).first()
+        if user and check_password_hash(user.password, request.form['password']):
             if login_user(user):
-                flash('Connexion réussie', 'sucess')
-                return
+                flash('Connexion réussie', 'success')
+                return redirect(url_for('index'))  # Redirect to home or dashboard
             flash('Erreur lors de la connexion', 'error')
-            return
         flash('Email ou mot de passe incorrect', 'error')
-        return
     return render_template('./auth/login.html')
 
 @app.route('/logout')
@@ -114,9 +121,9 @@ def get_user_by_id(user_id):
 @app.route('/users/<int:user_id>', methods=['PUT'])
 def update_user_by_id(user_id):
     user = User.query.get(user_id)
-    user.nom = request['name']
-    user.email = request['email']
-    user.password = request['password'] if check_password_hash(request['password'], current_user.password) else flash('Mot de passe inchangé', 'warning')
+    user.nom = request.form['name']
+    user.email = request.form['email']
+    user.password = request.form['password'] if check_password_hash(request.form['password'], current_user.password) else flash('Mot de passe inchangé', 'warning')
     db.session.commit()
     flash(f'Utilisateur {user.nom} modifié avec succès', 'sucess')
     return
@@ -199,7 +206,7 @@ def get_payments_by_order_id(order_id):
 @app.route('/reviews', methods=['GET', 'POST'])
 def get_review():
     if request.method == 'POST':
-        review = reviews(
+        review = Reviews(
             product_id = request['product_id'],
             user_id = request['user_id'],
             rating = request['rating'],
@@ -208,12 +215,12 @@ def get_review():
         db.session.add(review)
         db.session.commit()
         flash('Avis ajouté avec succès', 'sucess')
-    return render_template(), reviews.query.all()
+    return render_template(), Reviews.query.all()
 
 @app.route('/products/<int:product_id>/reviews', methods=['POST', 'GET'])
 def add_review(product_id):
     if request.method == 'POST':
-        review = reviews(
+        review = Reviews(
             product_id=product_id,
             user_id=request['user_id'],
             rating=request['rating'],
@@ -222,11 +229,11 @@ def add_review(product_id):
         db.session.add(review)
         db.session.commit()
         flash(f'Avis ajouté avec succès pour {product_id}', 'success')
-    return render_template(), reviews.query.filter_by(product_id=product_id)
+    return render_template(), Reviews.query.filter_by(product_id=product_id)
 
 @app.route('/reviews/<int:review_id>', methods=['DELETE'])
 def delete_review_by_id(review_id):
-    review = reviews.query.get(review_id)
+    review = Reviews.query.get(review_id)
     db.session.delete(review)
     db.session.commit()
     flash('Avis supprimé avec succès', 'sucess')

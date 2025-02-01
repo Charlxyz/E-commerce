@@ -1,0 +1,50 @@
+.items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Crée une grille responsive */
+    gap: 20px; /* Espace entre les cartes */
+    padding: 20px; /* Espace autour de la grille */
+}
+
+.item-card {
+    background: linear-gradient(45deg, #1E88E5, #00ACC1);
+    border-radius: 5px;
+    padding: 15px;
+    box-shadow: 0 0 10px #212121;
+    display: flex;
+    flex-direction: column; /* Aligne le contenu verticalement */
+    align-items: center; /* Centre le contenu horizontalement */
+    justify-content: center;
+    text-decoration: none; /* Supprime le soulignement des liens */
+    color: inherit; /* Utilise la couleur du texte par défaut */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Ajoute une transition */
+}
+
+.item-card img {
+    width: 100%; /* Prend toute la largeur de la carte */
+    height: auto; /* Garde le ratio d'aspect */
+    max-width: 150px; /* Limite la taille de l'image */
+    margin: 0 auto 10px auto; /* Centre l'image */
+}
+
+.item-card h3 {
+    font-size: 18px;
+    margin: 0;
+    text-align: center;
+    color: #F5F5F5;
+}
+
+.item-card p {
+    font-size: 14px;
+    color: #F5F5F5;
+    text-align: center; /* Centre le texte */
+    margin: 0;
+}
+
+.item-card:hover {
+    transform: scale(1.05); /* Agrandit légèrement au survol */
+    box-shadow: 0 0 15px #1E88E5; /* Accentue l'ombre */
+}
+
+.item-card {
+    width: auto;
+}

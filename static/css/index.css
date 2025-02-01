@@ -1,0 +1,195 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #F5F5F5;
+    color: #212121;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #F5F5F5;
+    padding: 10px 20px;
+    box-shadow: 0 0 10px #212121;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.logo h1 {
+    font-size: 20px;
+    margin: 0;
+}
+
+.logo span {
+    font-size: 12px;
+    color: #212121;
+}
+
+nav {
+    display: flex;
+    gap: 15px;
+    justify-content: center; /* Centre horizontalement */
+    align-items: center; /* Centre verticalement */
+    flex: 1; /* S'étend pour occuper tout l'espace restant */
+}
+
+nav a {
+    text-decoration: none;
+    color: #212121;
+    font-size: 16px;
+    text-align: center; /* Centre le texte dans chaque lien */
+}
+
+.search-bar {
+    display: flex;
+    flex: 1;
+    margin: 0 20px;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+
+.search-bar input {
+    width: 400px;
+    height: 25px;
+    padding: 10px;
+    border: 2px solid #1E88E5;
+    font-size: 16px;
+    border-radius: 5px;
+    background-color: #F5F5F5;
+    color: #1E88E5;
+    margin-top: 15px;
+}
+
+.search-bar input:focus {
+    color: #1E88E5;
+    outline: none;
+}
+
+.content {
+    padding: 20px;
+}
+
+.popular-items {
+    margin-top: 20px;
+}
+
+.sikp-link {
+    color: #212121;
+    text-decoration: none;
+}
+
+.sikp-link:hover {
+    color: #1E88E5;
+}
+
+nav svg:hover {
+    fill: #1E88E5;
+}
+
+nav rect:hover{
+    fill: #1E88E5;
+}
+
+.login a:hover {
+    color: #1E88E5;
+}
+
+h2 {
+    justify-content: center;
+    display: flex;
+}
+
+input::placeholder {
+    color: #1E88E5; /* Couleur du placeholder */
+    font-style: italic; /* Style optionnel */
+    font-size: 14px; /* Taille de la police */
+    opacity: 1; /* Transparence du placeholder (1 = opaque) */
+}
+
+.flash-message {
+    padding: 10px 20px;  /* Espace à l'intérieur de la pastille */
+    color: white;
+    border-radius: 15px;  /* Bords arrondis */
+    position: fixed;
+    bottom: 20px;  /* Positionné en bas */
+    right: 20px;   /* Positionné à droite */
+    display: none;
+    font-size: 16px;
+    box-shadow: 0 4px 6px #212121;  /* Ombre légère pour donner un effet de profondeur */
+}
+
+.flash-message.success {
+    color: #212121;
+    background-color: #4CAF50;  /* Vert pour succès */
+}
+
+.flash-message.warning {
+    color: #212121;
+
+    background-color: #FF9800;  /* Orange pour avertissement */
+}
+
+.flash-message.error {
+    color: #212121;
+    background-color: #F44336;  /* Rouge pour erreur */
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+/* Cible tous les tooltips */
+.tooltip .tooltip-text {
+    visibility: hidden;
+    background-color: #00ACC1;
+    color: white;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px 10px; /* Ajuste l'espace autour du texte */
+    position: fixed; /* Assurez-vous que c'est positionné */
+    top: 102%; /* Positionne le tooltip juste en dessous de l'élément */
+    left: 50%;
+    transform: translateX(-50%); /* Centre le tooltip horizontalement */
+    white-space: normal; /* Permet au texte de passer à la ligne */
+    opacity: 0;
+    transition: opacity 0.3s;
+    max-width: 300px; /* Limite la taille maximale du tooltip */
+    width: 100%; /* Utilise toute la largeur du parent sans dépasser */
+    word-wrap: break-word; /* Permet aux mots longs de se couper pour ne pas déborder */
+}
+
+/* Affiche le tooltip au survol */
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Cible les tooltips qui contiennent des SVG */
+.tooltip-with-svg .tooltip-text {
+    max-width: none; /* Pas de limite de largeur spécifique */
+    width: auto; /* Permet au tooltip d'avoir une largeur automatique */
+    white-space: nowrap; /* Le texte ne se divise pas en plusieurs lignes */
+}
+
+/* Cible uniquement les SVG pour changer leur couleur au survol */
+.tooltip svg {
+    fill: black; /* Couleur de base */
+    transition: fill 0.3s ease; /* Animation fluide */
+}
+
+.tooltip:hover svg {
+    fill: #00ACC1; /* Couleur au survol */
+}
