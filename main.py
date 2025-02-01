@@ -1,5 +1,14 @@
 from flask import Flask, render_template, redirect, url_for, flash, request
-from utils import Order, Payment, Product, User, reviews, app, db
+from flask_login import LoginManager, login_user, logout_user, current_user
+from utils import Order, Payment, Product, User, reviews, app, db, bcrypt
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
+login_manager = LoginManager(app)
+
+@login_manager.user_loader # Charge l'utilisateur si il se connecte
+def load_user(id):
+    return db.session.get(User, int(id))
 
 
 @app.route('/')
@@ -68,7 +77,7 @@ def register():
         user = User(
             nom = request['name'],
             email = request['email'],
-            password = request['password']
+            password = generate_password_hash(request['password'])
         )
         db.session.add(user)
         db.session.commit()
@@ -76,16 +85,27 @@ def register():
         return
     return render_template('./auth/register.html')
 
-@app.route('/user/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         user = User.query.filter_by(email=request['email']).first()
-        if user and user.password == request['password']:
-            flash('Connexion réussie', 'sucess')
+        if user and check_password_hash(user.password, request['password']):
+            if login_user(user):
+                flash('Connexion réussie', 'sucess')
+                return
+            flash('Erreur lors de la connexion', 'error')
             return
         flash('Email ou mot de passe incorrect', 'error')
         return
     return render_template('./auth/login.html')
+
+@app.route('/logout')
+def logout():
+    if logout_user() and current_user.is_authenticated:
+        flash('Déconnexion réussie', 'sucess')
+        return redirect(url_for('index'))
+    flash('Erreur lors de la déconnexion', 'error')
+    return
 
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user_by_id(user_id):
@@ -96,7 +116,7 @@ def update_user_by_id(user_id):
     user = User.query.get(user_id)
     user.nom = request['name']
     user.email = request['email']
-    user.password = request['password']
+    user.password = request['password'] if check_password_hash(request['password'], current_user.password) else flash('Mot de passe inchangé', 'warning')
     db.session.commit()
     flash(f'Utilisateur {user.nom} modifié avec succès', 'sucess')
     return
@@ -104,6 +124,9 @@ def update_user_by_id(user_id):
 @app.route('/users/<int:user_id>', methods=['DELETE'])
 def delete_user_by_id(user_id):
     user = User.query.get(user_id)
+    if not check_password_hash(request['password'], current_user.password):
+        flash('Mot de passe incorrect', 'error')
+        return
     db.session.delete(user)
     db.session.commit()
     flash(f'Utilisateur {user.nom} supprimé avec succès', 'sucess')
