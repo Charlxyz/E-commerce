@@ -1,11 +1,11 @@
 from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_login import LoginManager, login_user, logout_user, current_user
-from utils import Order, Payment, Product, User, reviews, app, db, bcrypt
 from werkzeug.security import generate_password_hash, check_password_hash
+from classDB import Order, Payment, Product, User, reviews, db
+from app import app
 
 
 login_manager = LoginManager(app)
-
 @login_manager.user_loader # Charge l'utilisateur si il se connecte
 def load_user(id):
     return db.session.get(User, int(id))
@@ -13,7 +13,7 @@ def load_user(id):
 
 @app.route('/')
 def index():
-    return 'Hello, World!'
+    return render_template('index.html')
 
 
 # Gestion Produits

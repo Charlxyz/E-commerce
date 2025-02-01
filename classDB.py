@@ -1,8 +1,8 @@
 # Utilisateur
 import os
+from app import app
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
-from utils.app import app
 
 basedir = os.path.abspath(os.path.dirname(__file__)).replace('\\utils', '')  # Chemin du fichier courant
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(basedir, 'DataBase', 'bdd.db')}"
