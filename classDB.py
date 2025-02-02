@@ -20,6 +20,12 @@ class User(db.Model, UserMixin):
     reviews = db.relationship('Reviews', back_populates='user', cascade="all, delete-orphan")
     cart = db.relationship('Cart', back_populates='user', cascade="all, delete-orphan")
 
+    def is_admin(self):
+        return self.role == 'admin'
+
+    def is_seller(self):
+        return self.role == 'seller'
+
 # Produits
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)

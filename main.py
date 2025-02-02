@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for, flash, request
 from flask_login import LoginManager, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from classDB import Order, Payment, Product, User, Reviews, db
+from utils import login_required, admin_required, seller_required
 from app import app
 
 
@@ -18,39 +19,58 @@ def index():
 
 
 # Gestion Produits
-@app.route('/products', methods=['GET', 'POST', 'PUT'])
+@app.route('/products', methods=['GET', 'POST', 'PUT', 'DELETE']) # Fais 💚
+@login_required
 def get_product():
-    if request.method == 'POST':
-        product = Product(
-            nom = request['name'],
-            descriprion = request['description'],
-            prix = request['price'],
-            quantite = request['quantity'],
-            image = request['image'],
-            remise = request['discount']
-        )
-        db.session.add(product)
-        db.session.commit()
-        flash('Produit ajouté avec succès', 'sucess')
+    if request.method == 'POST' and request.form.get('_method') == 'PUT': # (PUT)
+        product = db.session.query(Product).filter_by(nom=request.form['name']).first()
+        if product:
+            product.nom = request.form['item_name'] if request.form['item_name'] != "" else product.nom
+            product.description = request.form['item_description'] if request.form['item_description'] != "" else product.description
+            product.prix = request.form['item_price'] if request.form['item_price'] != "" else product.prix
+            product.quantite = request.form['item_quantity'] if request.form['item_quantity'] != "" else product.quantite
+            product.image = request.form['item_image'] if request.form['item_image'] != "" else product.image
+            product.remise = request.form['item_discount'] if request.form['item_discount'] != "" else product.remise
+            db.session.commit()
+            flash(f'Produit {product.nom} modifié avec succès', 'sucess')
+            return redirect(url_for('get_product'))
+        flash("Erreur dans le modification du produit", 'error')
 
-    elif request.method == 'PUT':
-        product = Product.query.get(request['id'])
-        product.nom = request['name']
-        product.description = request['description']
-        product.prix = request['price']
-        product.quantite = request['quantity']
-        product.image = request['image']
-        product.remise = request['discount']
-        db.session.commit()
-        flash('Produit modifié avec succès', 'sucess')
+    elif request.method == 'POST' and request.form.get('_method') == 'DELETE': # (DELETE)
+        product = db.session.query(Product).filter_by(nom=request.form['name']).first()
+        if product:
+            db.session.delete(product)
+            db.session.commit()
+            flash(f"Objet {product.nom} supprimer avec succès", 'success')
+            return redirect(url_for('get_product'))
+        flash("Erreur information érroné", 'error')
 
-    elif request.method == 'GET': # Fais 💚
+    elif request.method == 'POST':
+        if current_user.is_seller:
+            try:
+                product = Product(
+                    nom = request.form['item_name'],
+                    description = request.form['item_description'],
+                    prix = request.form['item_price'],
+                    quantite = request.form['item_quantity'],
+                    image = request.form['item_image'],
+                    remise = request.form['item_discount']
+                )
+                db.session.add(product)
+                db.session.commit()
+                flash(f'Produit {product.nom} ajouté avec succès', 'success')
+                return redirect(url_for('get_product'))
+            except KeyError:
+                flash("Erreur l'or de l'ajout de l'objet", 'error')
+        flash("Aucune possibilité de créer un nouveau produit.", 'error')
+
+    elif request.method == 'GET':
         products = Product.query.all()
         return render_template('product.html', products=products)
 
-    return render_template('product.html')
+    return render_template('product.html', products=products)
 
-@app.route('/poducts/<int:product_id>', methods=['GET'])
+@app.route('/poducts/<int:product_id>', methods=['GET', 'PUT', 'DELETE', 'POST'])
 def get_product_by_id(product_id):
     return Product.query.get(product_id)
 
@@ -86,11 +106,11 @@ def register():
                 email = request.form['email'],
                 password = generate_password_hash(request.form['password'])
             )
-        except:
+        except KeyError:
             flash("Erreur d'entré.", "warning")
         db.session.add(user)
         db.session.commit()
-        flash('Utilisateur créer avec succès', 'sucess')
+        flash('Utilisateur créer avec succès', 'success')
         return redirect(url_for('login'))
     return render_template('./auth/register.html')
 
@@ -107,12 +127,12 @@ def login():
     return render_template('./auth/login.html')
 
 @app.route('/logout')
+@login_required
 def logout():
-    if logout_user() and current_user.is_authenticated:
-        flash('Déconnexion réussie', 'sucess')
+    if logout_user():
+        flash('Déconnexion réussie', 'success')
         return redirect(url_for('index'))
     flash('Erreur lors de la déconnexion', 'error')
-    return
 
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user_by_id(user_id):
@@ -126,7 +146,6 @@ def update_user_by_id(user_id):
     user.password = request.form['password'] if check_password_hash(request.form['password'], current_user.password) else flash('Mot de passe inchangé', 'warning')
     db.session.commit()
     flash(f'Utilisateur {user.nom} modifié avec succès', 'sucess')
-    return
 
 @app.route('/users/<int:user_id>', methods=['DELETE'])
 def delete_user_by_id(user_id):
@@ -137,7 +156,6 @@ def delete_user_by_id(user_id):
     db.session.delete(user)
     db.session.commit()
     flash(f'Utilisateur {user.nom} supprimé avec succès', 'sucess')
-    return
 
 
 # Gestion Commandes
@@ -168,7 +186,6 @@ def update_order_by_id(order_id):
     order.date = request['date']
     db.session.commit()
     flash('Commande modifié avec succès', 'sucess')
-    return
 
 @app.route('/orders/<int:order_id>', methods=['DELETE'])
 def delete_order_by_id(order_id):
@@ -176,7 +193,6 @@ def delete_order_by_id(order_id):
     db.session.delete(order)
     db.session.commit()
     flash('Commande supprimé avec succès', 'sucess')
-    return
 
 
 # Gestion Paiements
@@ -237,7 +253,6 @@ def delete_review_by_id(review_id):
     db.session.delete(review)
     db.session.commit()
     flash('Avis supprimé avec succès', 'sucess')
-    return
 
 
 # Lancement

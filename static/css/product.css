@@ -48,3 +48,86 @@
 .item-card {
     width: auto;
 }
+
+.buttons-container {
+    display: flex; /* Utilise Flexbox */
+    gap: 10px; /* Espace entre les boutons */
+    justify-content: center; /* Centre les boutons horizontalement */
+}
+
+button {
+    background-color: #1E88E5;
+    border: none;
+    margin: 5px;
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    color: #F5F5F5;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #00ACC1;
+}
+
+.pop_input input {
+    border: 2px solid #1E88E5;
+    background-color: #F5F5F5;
+    border-radius: 5px;
+    margin: 10px;
+    height: 25px;
+    width: 370px;
+}
+
+/* Styles généraux pour le popup */
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background: #F5F5F5;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 20px;
+    z-index: 1000;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+/* Masquer le popup par défaut */
+.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, -50%) scale(0.9);
+}
+
+/* Afficher le popup */
+.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Style du bouton de fermeture */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: black;
+}
+
+.close:hover {
+    color: red;
+}
+
+h3 {
+    justify-content: center;
+    display: flex;
+}
+
+.pop_input button:focus {
+    border: 2px solid #1E88E5;
+    color: #1E88E5;
+}

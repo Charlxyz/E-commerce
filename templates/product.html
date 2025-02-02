@@ -8,6 +8,7 @@
     <link rel="icon" type="image/png" href="../static/img/logo.ico">
     <script src="../static/js/flashMessage.js"></script>
     <script src="../static/js/main.js"></script>
+    <script src="../static/js/popup.js"></script>
     <title>Baazar Tracker | Acceuil</title>
 </head>
 <body>
@@ -64,9 +65,15 @@
     <div class="search-bar">
         <input type="text" placeholder="Search for items">
     </div>
+    {% if current_user.is_seller or current_user.is_admin %}
+        <button type="button" id="new-item-open-popup">Nouvelle objet</button>
+        <button type="button" id="edit-item-open-popup">Modifier un objet</button>
+        <button type="button" id="delet-item-open-popup">Supprimer un objet</button>
+    {% else %}
+    {% endif %}
     <div class="content">
         <h2>Produits Disponibles</h2>
-        <div class="items-grid"> <!-- Ajout de cette div pour la grille -->
+        <div class="items-grid">
             {% for product in products %}
                 <div class="item-card tooltip">
                     <a href="/product/{{ product.id }}" class="sikp-link">
@@ -82,5 +89,74 @@
             {% endfor %}
         </div>
     </div>    
+
+    <!-- pop up ajouter un objet -->
+    <div id="new-item-popup" class="popup hidden">
+        <form action="/products" method="post">
+            <div class="popup-content">
+                <span id="new-item-close-popup" class="close">&times;</span>
+                <h3>Ajouter un objet</h3>
+                <div class="pop_input">
+                    <label for="item_name">Nom de l'objet:</label><br>
+                    <input type="text" id="item_name" name="item_name" placeholder="Nom de l'objet"><br>
+                    <label for="item_description">Description de l'objet:</label><br>
+                    <input type="text" id="item_description" name="item_description" placeholder="Description de l'objet"><br>
+                    <label for="item_price">Prix de l'objet:</label><br>
+                    <input type="text" id="item_price" name="item_price" placeholder="Prix de l'objet"><br>
+                    <label for="item_quantity">Quantité de l'objet:</label><br>
+                    <input type="text" id="item_quantity" name="item_quantity" placeholder="Quantité de l'objet"><br>
+                    <label for="">Image de l'objet:</label><br>
+                    <input type="text" id="item_image" name="item_image" placeholder="Image de l'objet"><br>
+                    <label for="item_discount">Remise de l'objet:</label><br>
+                    <input type="text" name="item_discount" id="item_discount" placeholder="Remise de l'objet">
+                    <button type="submit">Envoyer</button>
+                </div>
+            </div>
+        </form>
+    </div> 
+
+    <!-- pop up mattre a jour un objet -->
+    <div id="edit-item-popup" class="popup hidden">
+        <form action="/products" method="post">
+            <div class="popup-content">
+                <span id="edit-item-close-popup" class="close">&times;</span>
+                <h3>Mettre un jour un objet</h3>
+                <div class="pop_input">
+                    <input type="hidden" name="_method" value="PUT">
+                    <label for="name">Nom de l'objet:</label><br>
+                    <input type="text" id="name" name="name" placeholder="Nom de l'objet actuellement"><br>
+                    <label for="item_name">Nom de l'objet:</label><br>
+                    <input type="text" id="item_name" name="item_name" placeholder="Nouveau nom de l'objet"><br>
+                    <label for="item_description">Description de l'objet:</label><br>
+                    <input type="text" id="item_description" name="item_description" placeholder="Nouvelle description de l'objet"><br>
+                    <label for="item_price">Prix de l'objet:</label><br>
+                    <input type="text" id="item_price" name="item_price" placeholder="Nouveau prix de l'objet"><br>
+                    <label for="item_quantity">Quantité de l'objet:</label><br>
+                    <input type="text" id="item_quantity" name="item_quantity" placeholder="Nouvelle quantité de l'objet"><br>
+                    <label for="">Image de l'objet:</label><br>
+                    <input type="text" id="item_image" name="item_image" placeholder="Nouvelle image de l'objet"><br>
+                    <label for="item_discount">Remise de l'objet:</label><br>
+                    <input type="text" name="item_discount" id="item_discount" placeholder="Nouvelle remise de l'objet">
+                    <button type="submit">Modifier</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- pop up pour supprimer un objet -->
+    <div id="delet-item-popup" class="popup hidden">
+        <form action="/products" method="post">
+            <div class="popup-content">
+                <span id="delet-item-close-popup" class="close">&times;</span>
+                <h3>Supprimer un objet</h3>
+                <div class="pop_input">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <label for="name">Nom de l'objet:</label><br>
+                    <input type="text" id="name" name="name" placeholder="Nom de l'objet actuellement"><br>
+                    <button type="submit">Supprimer</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </body>
 </html>
