@@ -70,34 +70,46 @@ def get_product():
 
     return render_template('product.html', products=products)
 
-@app.route('/poducts/<int:product_id>', methods=['GET', 'PUT', 'DELETE', 'POST'])
+@app.route('/product/<int:product_id>', methods=['GET', 'POST'])  # Fais 💚
 def get_product_by_id(product_id):
-    return Product.query.get(product_id)
+    if request.method == 'POST' and request.form.get('_method') == 'PUT':  # (PUT simulé avec POST)
+        product = db.session.query(Product).get(product_id)
+        if product:
+            try:
+                product.description = request.form['description'] if request.form['description'] != "" else product.description
+                product.prix = request.form['prix'] if request.form['prix'] != "" else product.prix
+                product.quantite = request.form['quantite'] if request.form['quantite'] != "" else product.quantite
+                product.image = request.form['image'] if request.form['image'] != "" else product.image
+            except KeyError:
+                flash("Erreur l'ors de l'entré d'information", 'error')
+            db.session.commit()
+            flash(f'Produit {product.nom} modifié avec succès', 'success')
+            return redirect(url_for('get_product'))
+        flash("Erreur lors de la mise à jour du produit", 'warning')
+        return redirect(url_for('get_product_by_id', product_id=product_id))
 
-@app.route('/products/<int:product_id>', methods=['PUT'])
-def update_product_by_id(product_id):
-    product = Product.query.get(product_id)
-    product.nom = request.form['name']
-    product.description = request.form['description']
-    product.prix = request.form['price']
-    product.quantite = request.form['quantity']
-    product.image = request.form['image']
-    product.remise = request.form['discount']
-    db.session.commit()
-    flash(f'Produit {product.nom} modifié avec succès', 'sucess')
-    return
+    elif request.method == 'POST' and request.form.get('_method') == 'DELETE':  # (DELETE simulé avec POST)
+        product = db.session.query(Product).get(product_id)
+        if product:
+            if db.session.delete(product):
+                db.session.commit()
+                flash(f'Produit {product.nom} supprimer avec succès', 'success')
+                return redirect(url_for('get_product'))
+            flash("Erreur de la suppression de l'objet.", 'error')
+        flash("Erreur lors de la mise à jour du produit", 'warning')
+        return redirect(url_for('get_product_by_id', product_id=product_id))
 
-@app.route('/products/<int:product_id>', methods=['DELETE'])
-def delete_product_by_id(product_id):
-    product = Product.query.get(product_id)
-    db.session.delete(product)
-    db.session.commit()
-    flash(f'Produit {product.nom} supprimé avec succès', 'sucess')
-    return
+    elif request.method == 'GET':
+        product = db.session.query(Product).get(product_id)
+        if product:
+            return render_template('productId.html', products=product)
+
+        flash("Erreur lors de la récupération de l'objet.", 'error')
+    return render_template('productId.html', products="")
 
 
 # Gestion Utilisateurs
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/register', methods=['GET', 'POST'])  # Fais 💚
 def register():
     if request.method == 'POST':
         try:
@@ -114,7 +126,7 @@ def register():
         return redirect(url_for('login'))
     return render_template('./auth/register.html')
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])  # Fais 💚
 def login():
     if request.method == 'POST':
         user = User.query.filter_by(nom=request.form['name']).first()
@@ -126,7 +138,7 @@ def login():
         flash('Email ou mot de passe incorrect', 'error')
     return render_template('./auth/login.html')
 
-@app.route('/logout')
+@app.route('/logout')  # Fais 💚
 @login_required
 def logout():
     if logout_user():

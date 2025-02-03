@@ -65,7 +65,7 @@
     <div class="search-bar">
         <input type="text" placeholder="Search for items">
     </div>
-    {% if current_user.is_seller or current_user.is_admin %}
+    {% if current_user.role == 'seller' or current_user.role == 'admin' %}
         <button type="button" id="new-item-open-popup">Nouvelle objet</button>
         <button type="button" id="edit-item-open-popup">Modifier un objet</button>
         <button type="button" id="delet-item-open-popup">Supprimer un objet</button>
