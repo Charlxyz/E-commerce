@@ -3,100 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/productId.css') }}">
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo.ico') }}">
-    <script src="{{ url_for('static', filename='js/flashMessage.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/popup.js') }}"></script>
-    <title>Baazar Tracker | Accueil</title>
+    <title>Produit - Ma Boutique</title>
+    <link rel="stylesheet" href="../static/css/index.css">
+    <link rel="stylesheet" href="../static/css/productId.css">
+    <link rel="icon" type="image/png" href="../static/img/logo.ico">
+    <script src="../static/js/flashMessage.js"></script>
+    <script src="../static/js/main.js"></script>
+    <title>E-Commerce | Acceuil</title>
 </head>
 <body>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <div class="flash-message {{ messages[0][0] }}">
-            {{ messages[0][1] }}
-        </div>
-    {% endif %}
-    {% endwith %}
-
+    <!-- Barre de navigation -->
     <header>
-        <div class="logo">
-            <img src="{{ url_for('static', filename='img/logo.ico') }}" alt="Bazaar Tracker Logo">
-            <div>
-                <a href="/home" class="sikp-link"><h1>E-Commerce</h1></a>
-                <span>The Future E-Commerce</span>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-message {{ messages[0][0] }}">
+                {{ messages[0][1] }}
             </div>
-        </div>
+        {% endif %}
+        {% endwith %}
         <nav>
-            <div class="tooltip tooltip-with-svg">
-                <a href="/products">
-                    <div class="tooltip-icon">
-                        <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="3" y="5" width="18" height="2" fill="black"/>
-                            <rect x="3" y="11" width="18" height="2" fill="black"/>
-                            <rect x="3" y="17" width="8" height="2" fill="black"/>
-                            <rect x="14" y="15" width="2" height="6" fill="black"/>
-                            <rect x="11" y="17" width="6" height="2" fill="black"/>
-                        </svg>
-                    </div>
-                </a>
-                <span class="tooltip-text">Produit</span>
+            <div class="logo">
+                <h1>Ma Boutique</h1>
             </div>
-              
-            <div class="tooltip">
-                <a href="#">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 24 24" fill="black">
-                        <path d="M3 3h2l3.6 7.59-1.35 2.45C7.08 13.81 7 14.15 7 14.5 7 15.33 7.67 16 8.5 16H19v-2H8.79c-.45 0-.67-.54-.35-.85L9.8 11h7.05c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21L4.27.62C4.1.25 3.72 0 3.3 0H0v2h2l4 8-1.25 2.25C4.28 12.65 4 13.28 4 14c0 1.66 1.34 3 3 3h12v-2H7c-.55 0-1-.45-1-1 0-.17.04-.34.11-.5L8 10h8.21l-1.79 3H7l1.1-2h7.45c.75 0 1.41-.41 1.75-1.03L21 4H6l-1.1-2H3zM6 19c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-                    </svg>
-                </a>
-                <span class="tooltip-text">Commandes</span>
-            </div>
+            <ul class="nav-links">
+                <li><a href="/home">Accueil</a></li>
+                <li><a href="/products">Produits</a></li>
+                <li><a href="#">Promotions</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">Panier</a></li>
+                {% if current_user.is_authenticated %}
+                    <li><a href="/logout">Déconnexion</a></li>
+                {% else %}
+                    <li><a href="/login">Connexion</a></li>
+                {% endif %}
+            </ul>
         </nav>
-        <div class="login">
-            {% if current_user.is_authenticated %}
-                <a href="/profil" class="sikp-link">Profil</a> |
-                <a href="/logout" class="sikp-link">Se déconnecter</a>
-            {% else %}
-                <a href="/login" class="sikp-link">Se connecter</a>
-            {% endif %}
-        </div>
     </header>
 
-    <div class="search-bar">
-        <input type="text" placeholder="Search for items">
-    </div>
-
-    <div class="content">
-        <h2>{{ products.nom }}</h2>
-        <div class="unique_container">
-            <img src="../static/img/product/{{ products.image }}" alt="{{ products.nom }}">
-            <h3>{{ products.nom }}</h3>
-            <div class="information">
-                {% if current_user.role == 'seller' or current_user.role == 'admin' %}
-                    <form action="/product/{{ products.id }}" method="post">
-                        <input type="hidden" name="id" value="{{ products.id }}">
-                        <h3>Description:</h3>
-                        <textarea name="description" id="description">{{ products.description }}</textarea>
-                        <h3>Prix</h3>
-                        <input type="text" name="prix" id="prix" placeholder="{{ products.prix }}">
-                        <h3>Quantité</h3>
-                        <input type="text" name="quantite" id="quantite" placeholder="{{ products.quantite }}">
-                        <h3>Image</h3>
-                        <input type="text" name="image" id="image" placeholder="{{ products.image }}"><br><br>
-                        <button type="submit" name="_method" value="PUT">Modifier</button>
-                        <button type="submit" name="_method" value="DELETE">Supprimer</button>
-                    </form>
-                {% else %}
-                    <h3>Description:</h3>
-                    <p id="description">{{ products.description }}</p>
-                    <h3>Prix</h3>
-                    <p id="prix">{{ products.prix }}</p>
-                    <h3>Quantité</h3>
-                    <p id="quantite">{{ products.quantite }}</p>
-                {% endif %}
+    <!-- Section du produit -->
+    <section class="product-detail">
+        <div class="product-container">
+            <img src="../static/img/product/{{ products.image }}" alt="{{ products.nom }}" class="product-image">
+            <div class="product-info">
+                <h2>{{ products.nom }}</h2>
+                <p class="price">€{{ products.prix }}</p>
+                <p class="description">{{ products.description }}</p>
+                <p class="description">En stocke: {{ products.quantite }}</p>
+                <button>Ajouter au panier</button>
             </div>
         </div>
-    </div>
+    </section>
+
+    {% if current_user.role == 'seller' or current_user.role == 'admin' %}
+        <!-- Formulaire de modification du produit -->
+        <section class="edit-product">
+            <h2>Modifier le Produit</h2>
+            <form action="#" method="post">
+                <label for="product-name">Nom du Produit :</label>
+                <input type="text" id="product-name" name="product-name" value="{{ products.nom }}" required>
+    
+                <label for="product-price">Prix (€) :</label>
+                <input type="number" id="product-price" name="product-price" value="{{ products.prix }}" required>
+    
+                <label for="product-description">Description :</label>
+                <textarea id="product-description" name="product-description" rows="4" required>{{ products.description }}</textarea>
+    
+                <label for="product-image">Image :</label>
+                <input type="file" id="product-image" name="product-image" accept="image/*">
+    
+                <button type="submit">Enregistrer les modifications</button>
+            </form>
+        </section>
+    {% else %}
+    {% endif %}
+
+    <!-- Espace de commentaire -->
+    <section class="comment-section">
+        <h3>Laissez un commentaire</h3>
+        <form action="#" method="post">
+            <textarea name="comment" placeholder="Écrivez votre commentaire ici..." rows="4" required></textarea>
+            <button type="submit">Envoyer</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Ma Boutique. Tous droits réservés.</p>
+            <div class="social-links">
+                <a href="#">Facebook</a>
+                <a href="#">Instagram</a>
+                <a href="#">Twitter</a>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

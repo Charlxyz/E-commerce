@@ -1,120 +1,163 @@
-body {
+/* Styles généraux */
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
     font-family: Arial, sans-serif;
-    background-color: #F5F5F5;
-    color: #212121;
 }
 
+body {
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* Barre de navigation */
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #F5F5F5;
-    padding: 10px 20px;
-    box-shadow: 0 0 10px #212121;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-}
-
-.logo img {
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
-}
-
-.logo h1 {
-    font-size: 20px;
-    margin: 0;
-}
-
-.logo span {
-    font-size: 12px;
-    color: #212121;
+    background-color: #333;
+    padding: 10px 0;
 }
 
 nav {
     display: flex;
-    gap: 15px;
-    justify-content: center; /* Centre horizontalement */
-    align-items: center; /* Centre verticalement */
-    flex: 1; /* S'étend pour occuper tout l'espace restant */
-}
-
-nav a {
-    text-decoration: none;
-    color: #212121;
-    font-size: 16px;
-    text-align: center; /* Centre le texte dans chaque lien */
-}
-
-.search-bar {
-    display: flex;
-    flex: 1;
-    margin: 0 20px;
+    justify-content: space-between;
     align-items: center;
-    text-align: center;
-    justify-content: center;
+    padding: 0 20px;
 }
 
-.search-bar input {
-    width: 400px;
-    height: 25px;
-    padding: 10px;
-    border: 2px solid #1E88E5;
-    font-size: 16px;
+nav .logo h1 {
+    color: #fff;
+}
+
+nav .nav-links {
+    list-style-type: none;
+    display: flex;
+}
+
+nav .nav-links li {
+    margin-left: 20px;
+}
+
+nav .nav-links a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Bannière principale */
+.hero {
+    background-image: url('https://via.placeholder.com/1200x500'); /* Remplace cette URL par l'image de ta bannière */
+    background-size: cover;
+    background-position: center;
+    text-align: center;
+    padding: 100px 20px;
+    color: #121212;
+}
+
+.hero h2 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.cta-button {
+    padding: 10px 30px;
+    background-color: #f8c32b;
+    color: #fff;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
     border-radius: 5px;
-    background-color: #F5F5F5;
-    color: #1E88E5;
+}
+
+.cta-button:hover {
+    background-color: #e0a826;
+}
+
+/* Section des produits */
+.products {
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.products h2 {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    justify-items: center;
+}
+
+.product-item {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 250px;
+}
+
+.product-item img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.product-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.product-item p {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.product-item button {
+    padding: 10px 20px;
+    background-color: #f8c32b;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.product-item button:hover {
+    background-color: #e0a826;
+}
+
+/* Footer */
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+footer .social-links {
     margin-top: 15px;
 }
 
-.search-bar input:focus {
-    color: #1E88E5;
-    outline: none;
-}
-
-.content {
-    padding: 20px;
-}
-
-.popular-items {
-    margin-top: 20px;
-}
-
-.sikp-link {
-    color: #212121;
+footer .social-links a {
+    color: #fff;
+    margin: 0 10px;
     text-decoration: none;
 }
 
-.sikp-link:hover {
-    color: #1E88E5;
+footer .social-links a:hover {
+    color: #f8c32b;
 }
 
-nav svg:hover {
-    fill: #1E88E5;
-}
-
-nav rect:hover{
-    fill: #1E88E5;
-}
-
-.login a:hover {
-    color: #1E88E5;
-}
-
-h2 {
-    justify-content: center;
-    display: flex;
-}
-
-input::placeholder {
-    color: #1E88E5; /* Couleur du placeholder */
-    font-style: italic; /* Style optionnel */
-    font-size: 14px; /* Taille de la police */
-    opacity: 1; /* Transparence du placeholder (1 = opaque) */
+.skip-link {
+    text-decoration: none;
+    color: #333;
 }
 
 .flash-message {
@@ -136,118 +179,10 @@ input::placeholder {
 
 .flash-message.warning {
     color: #212121;
-
     background-color: #FF9800;  /* Orange pour avertissement */
 }
 
 .flash-message.error {
     color: #212121;
     background-color: #F44336;  /* Rouge pour erreur */
-}
-
-.tooltip {
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
-}
-
-/* Cible tous les tooltips */
-.tooltip .tooltip-text {
-    visibility: hidden;
-    background-color: #00ACC1;
-    color: white;
-    text-align: center;
-    border-radius: 5px;
-    padding: 5px 10px; /* Ajuste l'espace autour du texte */
-    position: fixed; /* Assurez-vous que c'est positionné */
-    top: 102%; /* Positionne le tooltip juste en dessous de l'élément */
-    left: 50%;
-    transform: translateX(-50%); /* Centre le tooltip horizontalement */
-    white-space: normal; /* Permet au texte de passer à la ligne */
-    opacity: 0;
-    transition: opacity 0.3s;
-    max-width: 300px; /* Limite la taille maximale du tooltip */
-    width: 100%; /* Utilise toute la largeur du parent sans dépasser */
-    word-wrap: break-word; /* Permet aux mots longs de se couper pour ne pas déborder */
-}
-
-/* Affiche le tooltip au survol */
-.tooltip:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
-}
-
-/* Cible les tooltips qui contiennent des SVG */
-.tooltip-with-svg .tooltip-text {
-    max-width: none; /* Pas de limite de largeur spécifique */
-    width: auto; /* Permet au tooltip d'avoir une largeur automatique */
-    white-space: nowrap; /* Le texte ne se divise pas en plusieurs lignes */
-}
-
-/* Cible uniquement les SVG pour changer leur couleur au survol */
-.tooltip svg {
-    fill: black; /* Couleur de base */
-    transition: fill 0.3s ease; /* Animation fluide */
-}
-
-.tooltip:hover svg {
-    fill: #00ACC1; /* Couleur au survol */
-}
-
-.pop_input button:focus {
-    border: 2px solid #1E88E5;
-    color: #1E88E5;
-}
-
-
-.pop_input input {
-    border: 2px solid #1E88E5;
-    background-color: #F5F5F5;
-    border-radius: 5px;
-    margin: 10px;
-    height: 25px;
-    width: 370px;
-}
-
-/* Styles généraux pour le popup */
-.popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 400px;
-    background: #F5F5F5;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    border-radius: 8px;
-    padding: 20px;
-    z-index: 1000;
-    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out, transform 0.3s ease-in-out;
-}
-
-/* Masquer le popup par défaut */
-.hidden {
-    opacity: 0;
-    visibility: hidden;
-    transform: translate(-50%, -50%) scale(0.9);
-}
-
-/* Afficher le popup */
-.visible {
-    opacity: 1;
-    visibility: visible;
-    transform: translate(-50%, -50%) scale(1);
-}
-
-/* Style du bouton de fermeture */
-.close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 20px;
-    cursor: pointer;
-    color: black;
-}
-
-.close:hover {
-    color: red;
 }

@@ -20,7 +20,6 @@ def index():
 
 # Gestion Produits
 @app.route('/products', methods=['GET', 'POST', 'PUT', 'DELETE']) # Fais 💚
-@login_required
 def get_product():
     if request.method == 'POST' and request.form.get('_method') == 'PUT': # (PUT)
         product = db.session.query(Product).filter_by(nom=request.form['name']).first()

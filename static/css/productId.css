@@ -1,51 +1,120 @@
-.unique_container {
-    width: 650px;  /* Largeur */
-    height: auto; /* Hauteur */
-    background-color: #1E88E5; /* Couleur de fond */
+/* Styles pour la page du produit unique */
+.product-detail {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 20px;
+    text-align: center;
+}
+
+.product-container {
+    display: flex;
+    background-color: #fff;
+    padding: 20px;
     border-radius: 10px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    margin-top: 150px;
-    padding: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    width: 100%;
+    align-items: center;
+    gap: 20px;
 }
 
-img {
-    width: 200px;
-    height: 200px;
-}
-
-textarea {
+.product-image {
     width: 300px;
-    height: 50px;
-    border: #1E88E5;
-    background-color: #00ACC1;
     border-radius: 10px;
 }
 
-button:hover {
-    background-color: #00ACC1;
+.product-info {
+    text-align: left;
 }
 
-.buttons-container {
-    display: flex; /* Utilise Flexbox */
-    gap: 10px; /* Espace entre les boutons */
-    justify-content: center; /* Centre les boutons horizontalement */
+.product-info h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.price {
+    font-size: 1.5rem;
+    color: #f8c32b;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.description {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
 }
 
 button {
-    background-color: #00ACC1;
+    padding: 10px 20px;
+    background-color: #f8c32b;
+    color: #fff;
     border: none;
-    margin: 5px;
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 5px;
-    color: #F5F5F5;
     cursor: pointer;
+    border-radius: 5px;
+    font-size: 1.2rem;
 }
 
-h2 {
-    position: relative;
+button:hover {
+    background-color: #e0a826;
+}
+
+/* Styles pour l'espace de commentaire */
+.comment-section {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.comment-section h3 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.comment-section form {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.comment-section textarea {
+    width: 100%;
+    max-width: 600px;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+.edit-product {
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.edit-product h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.edit-product form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.edit-product label {
+    font-weight: bold;
+}
+
+.edit-product input, .edit-product textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
 }

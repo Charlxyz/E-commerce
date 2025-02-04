@@ -1,76 +1,129 @@
-.items-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Crée une grille responsive */
-    gap: 20px; /* Espace entre les cartes */
-    padding: 20px; /* Espace autour de la grille */
-}
-
-.item-card {
-    background: linear-gradient(45deg, #1E88E5, #00ACC1);
-    border-radius: 5px;
-    padding: 15px;
-    box-shadow: 0 0 10px #212121;
-    display: flex;
-    flex-direction: column; /* Aligne le contenu verticalement */
-    align-items: center; /* Centre le contenu horizontalement */
-    justify-content: center;
-    text-decoration: none; /* Supprime le soulignement des liens */
-    color: inherit; /* Utilise la couleur du texte par défaut */
-    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Ajoute une transition */
-}
-
-.item-card img {
-    width: 100%; /* Prend toute la largeur de la carte */
-    height: auto; /* Garde le ratio d'aspect */
-    max-width: 150px; /* Limite la taille de l'image */
-    margin: 0 auto 10px auto; /* Centre l'image */
-}
-
-.item-card h3 {
-    font-size: 18px;
+/* Styles généraux */
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* Barre de navigation */
+header {
+    background-color: #333;
+    padding: 10px 0;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+nav .logo h1 {
+    color: #fff;
+}
+
+nav .nav-links {
+    list-style-type: none;
+    display: flex;
+}
+
+nav .nav-links li {
+    margin-left: 20px;
+}
+
+nav .nav-links a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Section des produits */
+.products {
+    padding: 50px 20px;
     text-align: center;
-    color: #F5F5F5;
 }
 
-.item-card p {
-    font-size: 14px;
-    color: #F5F5F5;
-    text-align: center; /* Centre le texte */
-    margin: 0;
+.products h2 {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
 }
 
-.item-card:hover {
-    transform: scale(1.05); /* Agrandit légèrement au survol */
-    box-shadow: 0 0 15px #1E88E5; /* Accentue l'ombre */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    justify-items: center;
 }
 
-.item-card {
-    width: auto;
+.product-item {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 250px;
 }
 
-.buttons-container {
-    display: flex; /* Utilise Flexbox */
-    gap: 10px; /* Espace entre les boutons */
-    justify-content: center; /* Centre les boutons horizontalement */
+.product-item img {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 15px;
 }
 
-button {
-    background-color: #1E88E5;
+.product-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.product-item p {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.product-item button {
+    padding: 10px 20px;
+    background-color: #f8c32b;
+    color: #fff;
     border: none;
-    margin: 5px;
-    margin-top: 15px;
-    padding: 10px;
-    border-radius: 5px;
-    color: #F5F5F5;
     cursor: pointer;
+    border-radius: 5px;
 }
 
-button:hover {
-    background-color: #00ACC1;
+.product-item button:hover {
+    background-color: #e0a826;
 }
 
-h3 {
-    justify-content: center;
-    display: flex;
+/* Footer */
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+footer .social-links {
+    margin-top: 15px;
+}
+
+footer .social-links a {
+    color: #fff;
+    margin: 0 10px;
+    text-decoration: none;
+}
+
+footer .social-links a:hover {
+    color: #f8c32b;
+}
+
+.product-item:hover {
+    cursor: pointer;
+    border: 2px solid #e0a826;
+    box-shadow: 5px 5px 5px #e0a826;
+    transition: all 0.3s ease;
 }

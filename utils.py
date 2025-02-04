@@ -6,7 +6,7 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.is_authenticated:
-            flash("Vous devez être connecté pour accéder à cette page.", 'danger')
+            flash("Vous devez être connecté pour accéder à cette page.", 'warning')
             return redirect(url_for('login'))
         return f(*args, **kwargs)        
     return decorated_function
