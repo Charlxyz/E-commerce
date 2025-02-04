@@ -117,12 +117,12 @@ def register():
                 email = request.form['email'],
                 password = generate_password_hash(request.form['password'])
             )
+            db.session.add(user)
+            db.session.commit()
+            flash('Utilisateur créer avec succès', 'success')
+            return redirect(url_for('login'))
         except KeyError:
             flash("Erreur d'entré.", "warning")
-        db.session.add(user)
-        db.session.commit()
-        flash('Utilisateur créer avec succès', 'success')
-        return redirect(url_for('login'))
     return render_template('./auth/register.html')
 
 @app.route('/login', methods=['GET', 'POST'])  # Fais 💚
